@@ -1,0 +1,32 @@
+# Dockerfile - Multi-stage build for minimal image size
+# Stage 1: Build the application
+FROM rust:1.85-slim as builder
+
+WORKDIR /app
+
+# Copy workspace files
+COPY Cargo.toml Cargo.lock ./
+COPY services/gateway ./services/gateway
+# COPY shared ./shared
+
+# Build release binary with optimizations
+RUN cargo build --release --package gateway-service
+
+# Stage 2: Create minimal runtime image
+FROM debian:bookworm-slim
+
+# Install only required runtime dependencies
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN useradd -r -s /bin/false appuser
+USER appuser
+
+# Copy only the compiled binary
+COPY --from=builder /app/target/release/gateway-service /usr/local/bin/
+
+# Expose service port
+EXPOSE 3000
+
+# Set entrypoint
+ENTRYPOINT ["gateway-service"]

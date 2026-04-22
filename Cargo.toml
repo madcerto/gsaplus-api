@@ -1,0 +1,12 @@
+[workspace]
+resolver = "3"
+members = [
+    "services/*",
+]
+
+[workspace.dependencies]
+tokio = { version = "1.50", features = ["full"] }
+axum = "0.8"
+# tonic = "0.10"
+serde = { version = "1.0", features = ["derive"] }
+# tracing = "0.1"
