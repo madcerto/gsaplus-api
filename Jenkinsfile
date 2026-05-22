@@ -1,5 +1,8 @@
 pipeline {
     agent { docker { image 'rust:1.85-slim' } }
+    environment {
+        POSTGRES = credentials('gsaplus_db')
+    }
     stages {
         // Utilizing SCM option in Jenkins to get
         // this Jenkinsfile will already pull the

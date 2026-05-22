@@ -1,5 +1,14 @@
 services:
+  postgres:
+    image: postgres:18.3
+    environment:
+      POSTGRES_USER: ${POSTGRES_USR}
+      POSTGRES_PASSWORD: ${POSTGRES_PSW}
+    ports:
+      - "5432:5432"
   gateway:
+    depends_on:
+      - postgres
     build:
       context: .
       dockerfile: ./services/gateway/Dockerfile
