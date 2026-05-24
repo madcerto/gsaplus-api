@@ -4,7 +4,7 @@ use axum::{routing::get, Router};
 async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route("/events", get(|| async { "{}" }));
+        .route("/events", get(|| async { "{ \"events\": [], \"total\": 0, \"page\": 1, \"pages\": 0 }" }));
  
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("Listening on http://localhost:3000");
