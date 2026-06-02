@@ -1,15 +1,17 @@
 # Dockerfile - Multi-stage build for minimal image size
 # Stage 1: Build the application
-FROM rust:1.85-slim as builder
+FROM rust:1.86-slim AS builder
 
 WORKDIR /app
 
-# Copy workspace files
+# Copy and build dependencies
 COPY Cargo.toml Cargo.lock ./
-COPY services/gateway ./services/gateway
-# COPY shared ./shared
+COPY services/gateway/Cargo.toml services/gateway/
+RUN mkdir services/gateway/src && echo "fn main() {}" >> services/gateway/src/main.rs
+RUN cargo build --release
 
-# Build release binary with optimizations
+# Copy code and build release binary with optimizations
+COPY services/gateway ./services/gateway
 RUN cargo build --release --package gateway-service
 
 # Stage 2: Create minimal runtime image
