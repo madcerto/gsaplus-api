@@ -10,5 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./services/gateway/Dockerfile
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USR}:${POSTGRES_PSW}@postgres/${POSTGRES_USR}
     ports:
       - 3001:3000

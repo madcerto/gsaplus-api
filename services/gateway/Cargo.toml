@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 tokio.workspace = true
 axum.workspace = true
+diesel.workspace = true
+diesel_migrations.workspace = true
+pq-sys.workspace = true

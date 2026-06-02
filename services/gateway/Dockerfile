@@ -1,6 +1,6 @@
 # Dockerfile - Multi-stage build for minimal image size
 # Stage 1: Build the application
-FROM rust:1.86-slim AS builder
+FROM rust:1.86 AS builder
 
 WORKDIR /app
 
