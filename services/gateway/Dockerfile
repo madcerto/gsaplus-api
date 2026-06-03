@@ -14,8 +14,12 @@ RUN cargo build --release
 COPY services/gateway ./services/gateway
 RUN cargo build --release --package gateway-service
 
-# Stage 2: Create minimal runtime image
-FROM debian:bookworm-slim
+# Stage 2a: Test the application
+FROM builder AS test
+ENTRYPOINT ["cargo", "test", "--release"]
+
+# Stage 2b: Create minimal runtime image
+FROM debian:bookworm-slim AS deploy
 
 # Install only required runtime dependencies
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*

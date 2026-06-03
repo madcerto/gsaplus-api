@@ -9,7 +9,8 @@ pipeline {
         // rest of the repository
         stage('Test') {
             steps {
-                sh 'cargo test'
+                sh 'docker build -f services/gateway/Dockerfile --target=test --tag \'gsaplus-test\' .'
+                sh 'docker run \'gsaplus-test\''
             }
         }
         stage('Build') {
