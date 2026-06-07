@@ -3,20 +3,22 @@ use diesel::{prelude::*, pg::Pg};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use axum::{routing::get, Router};
 
+mod events;
+
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
-pub fn establish_connection() -> PgConnection {
+fn establish_connection() -> PgConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     PgConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-pub fn run_migrations(connection: &mut impl MigrationHarness<Pg>) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
+fn run_migrations(connection: &mut impl MigrationHarness<Pg>) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
     connection.run_pending_migrations(MIGRATIONS)?;
 
     Ok(())
 }
- 
+
 #[tokio::main]
 async fn main() {
     let mut connection = establish_connection();
@@ -24,7 +26,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route("/events", get(|| async { "{ \"events\": [], \"total\": 0, \"page\": 1, \"pages\": 0 }" }));
+        .route("/events", get(events::get_events));
  
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("Listening on http://localhost:3000");
