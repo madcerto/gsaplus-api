@@ -3,6 +3,7 @@ use diesel::{prelude::*, pg::Pg};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use axum::{routing::get, Router};
 
+mod schema;
 mod events;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");

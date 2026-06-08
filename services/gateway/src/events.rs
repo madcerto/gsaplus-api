@@ -1,20 +1,24 @@
 use serde::Serialize;
 use axum::Json;
+use diesel::prelude::*;
 use chrono::NaiveDateTime;
+use crate::establish_connection;
 
-#[derive(Serialize)]
-pub struct Event {
-    id: u32,
+#[derive(Serialize, Queryable, Selectable)]
+#[diesel(table_name = crate::schema::events)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+struct Event {
+    id: i32,
     title: String,
     description: String,
     location: String,
     start_time: NaiveDateTime,
     end_time: NaiveDateTime,
     is_multi_day: bool,
-    points: u32,
-    volunteer_hours: f32,
+    points: i32,
+    volunteer_hours: f64,
     category: String,
-    capacity: u32,
+    capacity: Option<i32>,
     organizer_id: String,
     created_at: NaiveDateTime,
     updated_at: NaiveDateTime,
@@ -23,12 +27,27 @@ pub struct Event {
 #[derive(Serialize)]
 pub struct EventCollection {
     events: Vec<Event>,
-    total: u32,
-    page: u32,
-    pages: u32
+    total: usize,
+    page: usize,
+    pages: usize
 }
 
+const TAKE: i64 = 12; // Events per page
+
 pub async fn get_events() -> Json<EventCollection> {
-    todo!()
-    //"{ \"events\": [], \"total\": 0, \"page\": 1, \"pages\": 0 }"
+    use crate::schema::events::dsl::*;
+
+    let connection = &mut establish_connection();
+    let items = events
+        .limit(TAKE)
+        .select(Event::as_select())
+        .load(connection)
+        .expect("Error loading events");
+
+    Json(EventCollection {
+        total: items.len(),
+        page: 1,
+        pages: (items.len() as f32 / TAKE as f32).ceil() as usize,
+        events: items
+    })
 }
