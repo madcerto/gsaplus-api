@@ -12,6 +12,7 @@ RUN cargo build --release
 
 # Copy code and build release binary with optimizations
 COPY services/gateway ./services/gateway
+RUN rm target/release/gateway-service
 RUN cargo build --release --package gateway-service
 
 # Stage 2a: Test the application
