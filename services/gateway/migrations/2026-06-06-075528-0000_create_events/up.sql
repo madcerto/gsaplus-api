@@ -11,6 +11,7 @@ CREATE TABLE events (
 	volunteer_hours FLOAT NOT NULL DEFAULT 0,
 	category VARCHAR NOT NULL,
 	capacity INT4,
+        image_url VARCHAR,
 	organizer_id VARCHAR NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW()
