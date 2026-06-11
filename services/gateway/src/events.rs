@@ -4,6 +4,7 @@ use diesel::prelude::*;
 use chrono::NaiveDateTime;
 use crate::establish_connection;
 
+// Note: timestamps are stored without timezone marker, but assumed to be EST
 #[derive(Serialize, Queryable, Selectable)]
 #[diesel(table_name = crate::schema::events)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -20,6 +21,7 @@ struct DBEvent {
     volunteer_hours: f64,
     category: String,
     capacity: Option<i32>,
+    image_url: Option<String>,
     organizer_id: String,
     created_at: NaiveDateTime,
     updated_at: NaiveDateTime,
