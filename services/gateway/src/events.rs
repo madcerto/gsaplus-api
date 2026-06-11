@@ -7,6 +7,7 @@ use crate::establish_connection;
 #[derive(Serialize, Queryable, Selectable)]
 #[diesel(table_name = crate::schema::events)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
+#[serde(rename_all = "camelCase")]
 struct Event {
     id: i32,
     title: String,
@@ -25,11 +26,18 @@ struct Event {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EventRelations {
+    rsvps: usize,
+    attendance_records: usize
+}
+#[derive(Serialize)]
 pub struct EventCollection {
     events: Vec<Event>,
     total: usize,
     page: usize,
-    pages: usize
+    pages: usize,
+    _count: EventRelations
 }
 
 const TAKE: i64 = 12; // Events per page
@@ -46,8 +54,9 @@ pub async fn get_events() -> Json<EventCollection> {
 
     Json(EventCollection {
         total: items.len(),
-        page: 1,
+        page: 1, // TODO: pagination
         pages: (items.len() as f32 / TAKE as f32).ceil() as usize,
-        events: items
+        events: items,
+        _count: EventRelations { rsvps: 0, attendance_records: 0 }
     })
 }
