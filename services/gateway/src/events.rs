@@ -7,6 +7,7 @@ use crate::establish_connection;
 #[derive(Serialize, Queryable, Selectable)]
 #[diesel(table_name = crate::schema::events)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
+#[serde(rename_all = "camelCase")]
 struct Event {
     id: i32,
     title: String,
